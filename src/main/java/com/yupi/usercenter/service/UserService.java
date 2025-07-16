@@ -2,7 +2,9 @@ package com.yupi.usercenter.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yupi.usercenter.entity.User;
+import com.yupi.usercenter.entity.UserLoginDTO;
 import com.yupi.usercenter.entity.UserRegisterDTO;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 /**
@@ -12,4 +14,5 @@ import com.yupi.usercenter.entity.UserRegisterDTO;
 */
 public interface UserService extends IService<User> {
 	long userRegister(UserRegisterDTO dto);
+	User userLogin(UserLoginDTO dto, HttpServletRequest request);
 }
