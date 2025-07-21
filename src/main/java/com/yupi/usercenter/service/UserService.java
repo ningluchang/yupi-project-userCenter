@@ -15,4 +15,5 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface UserService extends IService<User> {
 	long userRegister(UserRegisterDTO dto);
 	User userLogin(UserLoginDTO dto, HttpServletRequest request);
+	User getSafetyUser(User originUser);
 }

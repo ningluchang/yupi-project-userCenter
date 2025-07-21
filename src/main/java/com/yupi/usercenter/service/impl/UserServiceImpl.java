@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import com.yupi.usercenter.entity.User;
 import com.yupi.usercenter.mapper.UserMapper;
 
+import static com.yupi.usercenter.content.UserContent.USER_LOGIN_STATE;
+
 
 @Service
 @Slf4j
@@ -23,10 +25,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 	@Resource
 	private UserMapper userMapper;
 
-	/**
-	 * 用户登录状态
-	 */
-	private static final String USER_LOGIN_STATE = "user_login_state";
 
 	@Override
 	public long userRegister(UserRegisterDTO dto) {
@@ -116,6 +114,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 			return null;
 		}
 		// 脱敏
+		User desensitizedUserInfoAfterLogin = getSafetyUser(user);
+		// 登录成功，记录用户信息
+		request.getSession().setAttribute(USER_LOGIN_STATE, desensitizedUserInfoAfterLogin);
+		return desensitizedUserInfoAfterLogin;
+	}
+
+	@Override
+	public User getSafetyUser(User user) {
 		User desensitizedUserInfoAfterLogin = new User();
 		desensitizedUserInfoAfterLogin.setId(user.getId());
 		desensitizedUserInfoAfterLogin.setUsername(user.getUsername());
@@ -124,10 +130,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 		desensitizedUserInfoAfterLogin.setGender(user.getGender());
 		desensitizedUserInfoAfterLogin.setPhone(user.getPhone());
 		desensitizedUserInfoAfterLogin.setEmail(user.getEmail());
+		desensitizedUserInfoAfterLogin.setRole(user.getRole());
 		desensitizedUserInfoAfterLogin.setUserStatus(user.getUserStatus());
 		desensitizedUserInfoAfterLogin.setCreateTime(user.getCreateTime());
-		// 登录成功，记录用户信息
-		request.getSession().setAttribute(USER_LOGIN_STATE, desensitizedUserInfoAfterLogin);
 		return desensitizedUserInfoAfterLogin;
 	}
 }

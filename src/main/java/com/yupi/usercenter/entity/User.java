@@ -1,9 +1,6 @@
 package com.yupi.usercenter.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.util.Date;
@@ -90,6 +87,14 @@ public class User {
     /**
      * 删除
      */
+    @TableLogic
     @TableField(value = "isDelete")
     private Integer isDelete;
+
+
+    /**
+     * 角色 0-普通用户，1-管理员
+     */
+    @TableField(value = "role")
+    private int role;
 }
