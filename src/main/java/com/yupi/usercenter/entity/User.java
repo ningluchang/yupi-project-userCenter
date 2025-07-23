@@ -93,4 +93,10 @@ public class User {
      */
     @TableField(value = "role")
     private int role;
+
+    /**
+     * 星球编号
+     */
+    @TableField(value = "planetCode")
+    private String planetCode;
 }
