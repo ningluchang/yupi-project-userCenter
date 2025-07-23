@@ -135,6 +135,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 		desensitizedUserInfoAfterLogin.setCreateTime(user.getCreateTime());
 		return desensitizedUserInfoAfterLogin;
 	}
+
+	@Override
+	public void logout(HttpServletRequest request) {
+		request.getSession().removeAttribute(USER_LOGIN_STATE);
+	}
 }
 
 

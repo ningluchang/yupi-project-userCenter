@@ -5,10 +5,6 @@ import lombok.Data;
 
 import java.util.Date;
 
-/**
- * 
- * @TableName user
- */
 @TableName(value ="user")
 @Data
 public class User {

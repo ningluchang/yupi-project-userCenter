@@ -8,6 +8,7 @@ import com.yupi.usercenter.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -63,5 +64,11 @@ public class UserController {
 		Object userObject = request.getSession().getAttribute(USER_LOGIN_STATE);
 		User loginUser = (User) userObject;
 		return loginUser == null || loginUser.getRole() != ADMIN_ROLE;
+	}
+
+	@GetMapping("/logout")
+	public ResponseEntity<Void> logout(HttpServletRequest request) {
+		userService.logout(request);
+		return ResponseEntity.ok().build();
 	}
 }
