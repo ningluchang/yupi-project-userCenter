@@ -1,6 +1,7 @@
 package com.yupi.usercenter.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.yupi.usercenter.common.Result;
 import com.yupi.usercenter.entity.User;
 import com.yupi.usercenter.entity.UserLoginDTO;
 import com.yupi.usercenter.entity.UserRegisterDTO;
@@ -26,13 +27,15 @@ public class UserController {
 	private UserService userService;
 
 	@PostMapping("/register")
-	public long userRegister(@RequestBody UserRegisterDTO dto) {
-		return userService.userRegister(dto);
+	public Result<Long> userRegister(@RequestBody UserRegisterDTO dto) {
+		long l = userService.userRegister(dto);
+		return Result.success(l);
 	}
 
 	@PostMapping("/login")
-	public User userLogin(@RequestBody UserLoginDTO dto, HttpServletRequest request) {
-		return userService.userLogin(dto, request);
+	public Result<User> userLogin(@RequestBody UserLoginDTO dto, HttpServletRequest request) {
+		User user = userService.userLogin(dto, request);
+		return Result.success(user);
 	}
 
 	@GetMapping("/search")
@@ -49,14 +52,15 @@ public class UserController {
 	}
 
 	@PostMapping("/delete")
-	public boolean deleteUser(@RequestBody Long id, HttpServletRequest request) {
+	public Result<?> deleteUser(@RequestBody Long id, HttpServletRequest request) {
 		if (isAdmin(request)) {
-			return false;
+			return Result.error("无权限");
 		}
 		if (id < 0) {
-			return false;
+			return Result.error("参数错误");
 		}
-		return userService.removeById(id);
+		Boolean b = userService.removeById(id);
+		return Result.success(b);
 	}
 
 	private boolean isAdmin(HttpServletRequest request){
