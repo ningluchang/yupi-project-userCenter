@@ -6,7 +6,16 @@ public class ResultUtils {
 		return new BaseResponse<>(0, data, "ok", "");
 	}
 
-	public static BaseResponse error(ResultCode errorCode) {
+	public static <T> BaseResponse<T> error(ResultCode errorCode) {
 		return new BaseResponse<>(errorCode);
+	}
+	public static <T> BaseResponse<T> error(ResultCode errorCode, String message, String description) {
+		return new BaseResponse<>(errorCode.getCode(),null, message, description);
+	}
+	public static <T> BaseResponse<T> error(int code, String message, String description) {
+		return new BaseResponse<>(code,null, message, description);
+	}
+	public static <T> BaseResponse<T> error(ResultCode errorCode, String description) {
+		return new BaseResponse<>(errorCode.getCode(),null, errorCode.getMessage(), description);
 	}
 }

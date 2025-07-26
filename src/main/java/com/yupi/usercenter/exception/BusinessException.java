@@ -6,8 +6,16 @@ import com.yupi.usercenter.common.ResultCode;
  * 自定义异常类
  */
 public class BusinessException extends RuntimeException{
-	private Integer code;
-	private String description;
+	public Integer getCode() {
+		return code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	private final Integer code;
+	private final String description;
 
 	public BusinessException(String message,Integer code, String description) {
 		super(message);

@@ -2,8 +2,10 @@ package com.yupi.usercenter.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yupi.usercenter.common.ResultCode;
 import com.yupi.usercenter.entity.UserLoginDTO;
 import com.yupi.usercenter.entity.UserRegisterDTO;
+import com.yupi.usercenter.exception.BusinessException;
 import com.yupi.usercenter.service.UserService;
 import com.yupi.usercenter.utils.PasswordEncryptor;
 import jakarta.annotation.Resource;
@@ -30,31 +32,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 	public long userRegister(UserRegisterDTO dto) {
 		// 参数是否为空
 		if (StringUtils.isAllBlank(dto.getUsername(), dto.getUserAccount(), dto.getUserPassword(), dto.getCheckPassword())) {
-			return -1;
+			throw new BusinessException(ResultCode.PARAMS_ERROR,"参数为空");
 		}
 		// 账户不能小于4位
 		if (dto.getUserAccount().length() < 4) {
-			return -1;
+			throw new BusinessException(ResultCode.PARAMS_ERROR,"账号不能小于4位");
 		}
 		// 密码不能小于8位
 		if (dto.getUserPassword().length() < 8 || dto.getCheckPassword().length() < 8) {
-			return -1;
+			throw new BusinessException(ResultCode.PARAMS_ERROR,"密码不能小于8位");
 		}
 		// 账户不能包含特殊字符
 		boolean matches = dto.getUserAccount().matches("^[a-zA-Z0-9]+$");
 		if (!matches) {
-			return -1;
+			throw new BusinessException(ResultCode.PARAMS_ERROR,"账户不能包含特殊字符");
 		}
 		// 密码和校验密码相同
 		if (!dto.getUserPassword().equals(dto.getCheckPassword())) {
-			return -1;
+			throw new BusinessException(ResultCode.PARAMS_ERROR,"密码必须和校验密码相同");
 		}
 		// 账户不能重复
 		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("userAccount", dto.getUserAccount());
 		long count = userMapper.selectCount(queryWrapper);
 		if (count > 0) {
-			return -1;
+			throw new BusinessException(ResultCode.PARAMS_ERROR,"账号已被注册");
 		}
 
 		// 加密
@@ -73,7 +75,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 		user.setSalt(salt);
 		boolean saveResult = this.save(user);
 		if (!saveResult) {
-			return -1;
+			throw new BusinessException(ResultCode.PARAMS_ERROR,"注册失败");
 		}
 		return user.getId();
 	}

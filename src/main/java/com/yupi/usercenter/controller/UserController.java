@@ -2,10 +2,12 @@ package com.yupi.usercenter.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yupi.usercenter.common.BaseResponse;
+import com.yupi.usercenter.common.ResultCode;
 import com.yupi.usercenter.common.ResultUtils;
 import com.yupi.usercenter.entity.User;
 import com.yupi.usercenter.entity.UserLoginDTO;
 import com.yupi.usercenter.entity.UserRegisterDTO;
+import com.yupi.usercenter.exception.BusinessException;
 import com.yupi.usercenter.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +31,9 @@ public class UserController {
 
 	@PostMapping("/register")
 	public BaseResponse<Long> userRegister(@RequestBody UserRegisterDTO dto) {
+		if (dto == null) {
+			throw new BusinessException(ResultCode.PARAMS_ERROR);
+		}
 		long l = userService.userRegister(dto);
 		return ResultUtils.success(l);
 	}
@@ -40,25 +45,26 @@ public class UserController {
 	}
 
 	@GetMapping("/search")
-	public List<User> searchUsers(@RequestParam String username, HttpServletRequest request) {
+	public BaseResponse<List<User>> searchUsers(@RequestParam String username, HttpServletRequest request) {
 		if (isAdmin(request)) {
-			return new ArrayList<>();
+			throw new BusinessException(ResultCode.NO_AUTH, "无权限");
 		}
 		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
 		if (StringUtils.isNotBlank(username)) {
 			queryWrapper.like("username", username);
 		}
 		List<User> userList = userService.list(queryWrapper);
-		return userList.stream().map(user -> userService.getSafetyUser(user)).collect(Collectors.toList());
+		List<User> list = userList.stream().map(user -> userService.getSafetyUser(user)).collect(Collectors.toList());
+		return ResultUtils.success(list);
 	}
 
 	@PostMapping("/delete")
 	public BaseResponse<?> deleteUser(@RequestBody Long id, HttpServletRequest request) {
 		if (isAdmin(request)) {
-			return null;
+			throw new BusinessException(ResultCode.NO_AUTH, "无权限");
 		}
 		if (id < 0) {
-			return null;
+			throw new BusinessException(ResultCode.PARAMS_ERROR, "参数错误");
 		}
 		Boolean b = userService.removeById(id);
 		return ResultUtils.success(b);
